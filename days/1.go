@@ -3,6 +3,7 @@ package days
 import (
 	"bufio"
 	"fmt"
+	"sort"
 	"strconv"
 )
 
@@ -12,6 +13,7 @@ func D01() {
 
 	maxCarrying := 0
 	sum := 0
+	var carrying []int
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -20,6 +22,8 @@ func D01() {
 			if sum > maxCarrying {
 				maxCarrying = sum
 			}
+			carrying = append(carrying, sum)
+
 			sum = 0
 			continue
 		}
@@ -29,5 +33,7 @@ func D01() {
 		}
 		sum += calories
 	}
-	fmt.Println(maxCarrying)
+	carrying = append(carrying, sum)
+	sort.Sort(sort.Reverse(sort.IntSlice(carrying)))
+	fmt.Println(maxCarrying, carrying[0]+carrying[1]+carrying[2])
 }
