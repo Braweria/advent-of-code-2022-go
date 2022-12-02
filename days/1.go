@@ -35,5 +35,5 @@ func D01() {
 	}
 	carrying = append(carrying, sum)
 	sort.Sort(sort.Reverse(sort.IntSlice(carrying)))
-	fmt.Println(maxCarrying, carrying[0]+carrying[1]+carrying[2])
+	fmt.Println("Day 01", maxCarrying, carrying[0]+carrying[1]+carrying[2])
 }
