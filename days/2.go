@@ -11,21 +11,59 @@ func D02() {
 	defer file.Close()
 
 	shapes := map[string]string{"A": "Rock", "B": "Paper", "C": "Scissors", "X": "Rock", "Y": "Paper", "Z": "Scissors"}
+	updatedShapes := map[string]string{"A": "Rock", "B": "Paper", "C": "Scissors", "X": "Lost", "Y": "Draw", "Z": "Won"}
 
 	scoreSystem := map[string]int{"Rock": 1, "Paper": 2, "Scissors": 3, "Lost": 0, "Draw": 3, "Won": 6}
-	score := 0
+	firstScore := 0
+	secondScore := 0
 
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		handShapes := strings.Fields(line)
-		score += scoreSystem[shapes[handShapes[1]]]
+
+		firstScore += scoreSystem[shapes[handShapes[1]]]
 		outcome := checkOutcome(shapes[handShapes[0]], shapes[handShapes[1]])
-		score += scoreSystem[outcome]
+		firstScore += scoreSystem[outcome]
+
+		secondScore += scoreSystem[updatedShapes[handShapes[1]]]
+		reverseOutcome := checkReverseOutcome(updatedShapes[handShapes[0]], updatedShapes[handShapes[1]])
+		secondScore += scoreSystem[reverseOutcome]
 	}
 
-	fmt.Println(score)
+	fmt.Println(firstScore, secondScore)
+}
+
+func checkReverseOutcome(opponentShape string, outcome string) string {
+	myShape := opponentShape
+	if outcome == "Draw" {
+		myShape = opponentShape
+	}
+
+	if outcome == "Lost" {
+		switch opponentShape {
+		case "Rock":
+			myShape = "Scissors"
+		case "Scissors":
+			myShape = "Paper"
+		case "Paper":
+			myShape = "Rock"
+		}
+	}
+
+	if outcome == "Won" {
+		switch opponentShape {
+		case "Rock":
+			myShape = "Paper"
+		case "Scissors":
+			myShape = "Rock"
+		case "Paper":
+			myShape = "Scissors"
+		}
+	}
+
+	return myShape
 }
 
 func checkOutcome(opponentShape string, myShape string) string {
