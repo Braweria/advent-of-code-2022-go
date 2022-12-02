@@ -1,0 +1,24 @@
+name: Update AoC Badges 2022 🎄
+on:
+  push:
+    paths:
+      - "days/*.go"
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: joblo2213/aoc-badges-action@v3
+        with:
+          userid: ${{ secrets.AOC_USER_ID }}
+          session: ${{ secrets.AOC_SESSION_ID }}
+          year: 2022
+          file: "README.md"
+          dayRegex: '(?<=https:\/\/img\.shields\.io\/badge\/202%20📅-)[0-9]+(?=-blue)'
+          starsRegex: '(?<=https:\/\/img\.shields\.io\/badge\/Stars%20⭐-)[0-9]+(?=-yellow)'
+          daysCompletedRegex: '(?<=https:\/\/img\.shields\.io\/badge\/Days%20completed-)[0-9]+(?=-red)'
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        name: Push
+        with:
+          commit_message: Update badges ⭐
+          file_pattern: README.md
