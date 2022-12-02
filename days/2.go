@@ -32,7 +32,7 @@ func D02() {
 		secondScore += scoreSystem[reverseOutcome]
 	}
 
-	fmt.Println(firstScore, secondScore)
+	fmt.Println("Day 02", firstScore, secondScore)
 }
 
 func checkReverseOutcome(opponentShape string, outcome string) string {
