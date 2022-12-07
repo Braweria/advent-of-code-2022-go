@@ -30,12 +30,28 @@ func (group *elfGroup) isEngulfing() bool {
 	return false
 }
 
+func (group *elfGroup) isOverlapping() bool {
+	first := group.first
+	second := group.second
+
+	if first.end < second.start {
+		return false
+	}
+
+	if second.end < first.start {
+		return false
+	}
+
+	return true
+}
+
 func D04() {
 	file := getFile("inputs/4.txt")
 
 	scanner := bufio.NewScanner(file)
 
-	amount := 0
+	engulfing := 0
+	overlaps := 0
 
 	for scanner.Scan() {
 		group := elfGroup{}
@@ -66,10 +82,14 @@ func D04() {
 		}
 
 		if group.isEngulfing() {
-			amount++
+			engulfing++
+		}
+
+		if group.isOverlapping() {
+			overlaps++
 		}
 
 	}
 
-	fmt.Println("Day 04", amount)
+	fmt.Println("Day 04", engulfing, overlaps)
 }
