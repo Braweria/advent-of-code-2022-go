@@ -3,6 +3,7 @@ package days
 import (
 	"log"
 	"os"
+	"strconv"
 )
 
 func getFile(filename string) *os.File {
@@ -12,4 +13,10 @@ func getFile(filename string) *os.File {
 	}
 
 	return file
+}
+
+func getFileByNumber(number int) *os.File {
+	filename := "inputs/" + strconv.Itoa(number) + ".txt"
+
+	return getFile(filename)
 }
