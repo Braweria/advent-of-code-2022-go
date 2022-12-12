@@ -1,6 +1,7 @@
 package days
 
 import (
+	"bufio"
 	"fmt"
 	"strconv"
 	"strings"
@@ -49,17 +50,62 @@ func getNumbers(line string) (int, int, int) {
 }
 
 func D05() {
-	// file := getFileByNumber(5)
-	// defer file.Close()
+	file := getFileByNumber(5)
+	defer file.Close()
 
-	guides := instructions{}
+	scanner := bufio.NewScanner(file)
 
-	fmt.Println(guides)
-	n1, n2, n3 := getNumbers("move 1 from 2 to 1")
-	guides.add(n1, n2, n3)
-	fmt.Println(guides)
+	stacks := [10]crateStack{}
 
-	fmt.Println("Day 05")
+	for scanner.Scan() {
+		line := scanner.Text()
+		if len(line) == 0 {
+			break
+		}
+		col := 1
+		for i := 1; i < len(line); i += 4 {
+			char := string(line[i])
+
+			_, err := strconv.Atoi(char)
+			if err == nil {
+				break
+			}
+
+			if char == string(' ') {
+				col++
+				continue
+			}
+			stacks[col] = append(crateStack{char}, stacks[col]...)
+			col++
+		}
+	}
+
+	guide := instructions{}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		amount, from, to := getNumbers(line)
+		guide.add(amount, from, to)
+	}
+
+	for _, item := range guide {
+		for i := 0; i < item.amount; i++ {
+			crate := stacks[item.startPosition].grabCrate()
+			stacks[item.endPosition].addCrate(crate)
+		}
+	}
+
+	result := ""
+
+	for _, char := range stacks {
+		if len(char) == 0 {
+			continue
+		}
+		top := char.getTopCrate()
+		result += top
+	}
+
+	fmt.Println("Day 05", result)
 }
 
 func panicCheck(err error) {
