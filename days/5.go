@@ -15,6 +15,12 @@ func (crates *crateStack) grabCrate() string {
 	return crate
 }
 
+func (crates *crateStack) grabCrates(amount int) []crateStack {
+	grabbed := (*crates)[len(*crates)-amount:]
+	*crates = (*crates)[:len(*crates)-amount]
+	return grabbed
+}
+
 func (crates *crateStack) addCrate(crate string) {
 	*crates = append(*crates, crate)
 }
@@ -56,6 +62,7 @@ func D05() {
 	scanner := bufio.NewScanner(file)
 
 	stacks := [10]crateStack{}
+	blocks := [10]crateStack{}
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -76,6 +83,7 @@ func D05() {
 				continue
 			}
 			stacks[col] = append(crateStack{char}, stacks[col]...)
+			blocks[col] = append(crateStack{char}, blocks[col]...)
 			col++
 		}
 	}
