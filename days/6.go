@@ -6,9 +6,12 @@ import (
 )
 
 type packet struct {
-	index   int
-	chars   [4]string
-	counter int
+	index          int
+	chars          [4]string
+	counter        int
+	messageIndex   int
+	message        [14]string
+	messageCounter int
 }
 
 func (p *packet) addChar(char string) {
@@ -20,11 +23,20 @@ func (p *packet) addChar(char string) {
 	p.counter += 1
 }
 
-func (p *packet) check() bool {
-	return hasDupes(p.chars)
+func (p *packet) addMessage(char string) {
+	if p.messageIndex > 13 {
+		p.messageIndex = 0
+	}
+	p.message[p.messageIndex] = char
+	p.messageIndex += 1
+	p.messageCounter += 1
 }
 
-func hasDupes(arr [4]string) bool {
+func (p *packet) check() (bool, bool) {
+	return hasDupesInFour(p.chars), hasDupesInFourteen(p.message)
+}
+
+func hasDupesInFour(arr [4]string) bool {
 	mp := map[string]int{}
 
 	for _, v := range arr {
@@ -35,6 +47,22 @@ func hasDupes(arr [4]string) bool {
 	}
 
 	if len(mp) == 4 {
+		return true
+	}
+	return false
+}
+
+func hasDupesInFourteen(arr [14]string) bool {
+	mp := map[string]int{}
+
+	for _, v := range arr {
+		if v == "" {
+			continue
+		}
+		mp[v] += 1
+	}
+
+	if len(mp) == 14 {
 		return true
 	}
 	return false
@@ -59,19 +87,25 @@ func D06() {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanRunes)
 
-	firstPacket := packet{0, [4]string{}, 0}
+	firstPacket := packet{0, [4]string{}, 0, 0, [14]string{}, 0}
 	result1 := 0
+	result2 := 0
 
 	for scanner.Scan() {
 		char := scanner.Text()
 		firstPacket.addChar(char)
-		check := firstPacket.check()
+		firstPacket.addMessage(char)
 
-		if check {
+		check4, check14 := firstPacket.check()
+
+		if check4 && result1 == 0 {
 			result1 = firstPacket.counter
-			break
+		}
+
+		if check14 && result2 == 0 {
+			result2 = firstPacket.messageCounter
 		}
 	}
 
-	fmt.Println("Day 06", result1)
+	fmt.Println("Day 06", result1, result2)
 }
