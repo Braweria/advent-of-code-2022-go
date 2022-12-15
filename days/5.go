@@ -15,14 +15,19 @@ func (crates *crateStack) grabCrate() string {
 	return crate
 }
 
-func (crates *crateStack) grabCrates(amount int) []crateStack {
-	grabbed := (*crates)[len(*crates)-amount:]
+func (crates *crateStack) grabCrates(amount int) crateStack {
+	dest := make(crateStack, amount)
+	copy(dest, (*crates)[len(*crates)-amount:])
 	*crates = (*crates)[:len(*crates)-amount]
-	return grabbed
+	return dest
 }
 
 func (crates *crateStack) addCrate(crate string) {
 	*crates = append(*crates, crate)
+}
+
+func (crates *crateStack) addCrates(stack crateStack) {
+	*crates = append(*crates, stack...)
 }
 
 func (crates *crateStack) getTopCrate() string {
@@ -101,9 +106,13 @@ func D05() {
 			crate := stacks[item.startPosition].grabCrate()
 			stacks[item.endPosition].addCrate(crate)
 		}
+
+		block := blocks[item.startPosition].grabCrates(item.amount)
+		blocks[item.endPosition].addCrates(block)
 	}
 
 	result := ""
+	result2 := ""
 
 	for _, char := range stacks {
 		if len(char) == 0 {
@@ -113,7 +122,15 @@ func D05() {
 		result += top
 	}
 
-	fmt.Println("Day 05", result)
+	for _, char := range blocks {
+		if len(char) == 0 {
+			continue
+		}
+		top := char.getTopCrate()
+		result2 += top
+	}
+
+	fmt.Println("Day 05", result, result2)
 }
 
 func panicCheck(err error) {
