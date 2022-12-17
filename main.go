@@ -9,4 +9,5 @@ func main() {
 	days.D04()
 	days.D05()
 	days.D06()
+	days.D07()
 }
